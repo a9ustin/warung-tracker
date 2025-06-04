@@ -16,11 +16,23 @@ const dateInput = document.getElementById('date');
 dateInput.valueAsDate = today;
 currentDateDisplay.textContent = formatDate(today);
 
+// Inisialisasi data (tambahkan di sini)
+if (!localStorage.getItem('todayTransactions')) {
+  localStorage.setItem('todayTransactions', JSON.stringify([]));
+}
+if (!localStorage.getItem('transactionArchive')) {
+  localStorage.setItem('transactionArchive', JSON.stringify([]));
+}
+if (!localStorage.getItem('lastSavedDate')) {
+  localStorage.setItem('lastSavedDate', today.toDateString());
+}
+
 // Check if it's a new day and reset daily transactions if needed
 checkNewDay();
 
 // Load and display today's transactions
 loadTransactions();
+
 
 // Event listeners
 transactionForm.addEventListener('submit', addTransaction);
@@ -107,15 +119,13 @@ function addTransaction(e) {
 
 // Load and display transactions
 function loadTransactions() {
-  const transactions = JSON.parse(localStorage.getItem('todayTransactions') || []);
+  // Perbaikan: Gunakan array kosong jika data null/undefined
+  const transactions = JSON.parse(localStorage.getItem('todayTransactions') || '[]');
   
-  // Clear table
   transactionsTable.innerHTML = '';
   
-  // Add each transaction to the table
   transactions.forEach((transaction, index) => {
     const row = transactionsTable.insertRow();
-    
     row.innerHTML = `
       <td>${index + 1}</td>
       <td>${transaction.type === 'income' ? 'Uang Masuk' : 'Uang Keluar'}</td>
@@ -125,7 +135,6 @@ function loadTransactions() {
     `;
   });
   
-  // Update summary
   updateSummary(transactions);
 }
 
