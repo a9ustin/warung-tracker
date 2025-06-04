@@ -155,3 +155,102 @@ tr:hover {
     width: 100%;
   }
 }
+
+/* Mobile-first table styles */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  overflow-x: auto;
+  display: block;
+}
+
+th, td {
+  padding: 8px 4px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  min-width: 60px;
+}
+
+/* Responsive text */
+td:nth-child(3), /* Kolom jumlah */
+td:nth-child(4) { /* Kolom keterangan */
+  font-size: 13px;
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Button styles for mobile */
+button {
+  padding: 6px 8px;
+  font-size: 12px;
+}
+
+/* Stack columns on very small screens */
+@media (max-width: 400px) {
+  table {
+    display: table;
+  }
+  
+  th, td {
+    display: table-cell;
+    padding: 6px 3px;
+  }
+  
+  td:nth-child(4) { /* Keterangan */
+    max-width: 80px;
+  }
+}
+
+.transactions-section {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.summary div {
+  background: #f0f8ff;
+  padding: 8px;
+  border-radius: 4px;
+  flex-grow: 1;
+  text-align: center;
+  min-width: 100px;
+}
+
+.recap-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.recap-actions button {
+  flex: 1;
+  min-width: 120px;
+}
+
+@media (max-width: 600px) {
+  table, thead, tbody, th, td, tr {
+    display: block;
+  }
+  
+  td {
+    border: none;
+    position: relative;
+    padding-left: 50%;
+  }
+  
+  td:before {
+    position: absolute;
+    left: 6px;
+    content: attr(data-label);
+    font-weight: bold;
+  }
+}
