@@ -10,7 +10,7 @@ body {
   background-color: #f5f5f5;
   color: #333;
   line-height: 1.6;
-  padding: 20px;
+  padding: 15px;
 }
 
 .container {
@@ -31,15 +31,17 @@ header {
 
 h1 {
   color: #2c3e50;
+  font-size: 24px;
 }
 
 h2 {
   margin-bottom: 15px;
   color: #3498db;
+  font-size: 20px;
 }
 
 .date-display {
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: #7f8c8d;
   margin-top: 5px;
 }
@@ -47,19 +49,20 @@ h2 {
 /* Form styles */
 .input-section {
   background-color: #f9f9f9;
-  padding: 20px;
+  padding: 15px;
   border-radius: 8px;
   margin-bottom: 20px;
 }
 
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 12px;
 }
 
 label {
   display: block;
   margin-bottom: 5px;
   font-weight: 600;
+  font-size: 14px;
 }
 
 input, select {
@@ -67,7 +70,7 @@ input, select {
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  font-size: 16px;
+  font-size: 15px;
 }
 
 button {
@@ -77,7 +80,7 @@ button {
   padding: 10px 15px;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 15px;
   transition: background-color 0.3s;
 }
 
@@ -85,130 +88,7 @@ button:hover {
   background-color: #2980b9;
 }
 
-/* Transactions table */
-.transactions-section {
-  margin-bottom: 30px;
-}
-
-.summary {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 15px;
-  padding: 10px;
-  background-color: #f0f8ff;
-  border-radius: 4px;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-}
-
-th, td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-
-th {
-  background-color: #3498db;
-  color: white;
-}
-
-tr:hover {
-  background-color: #f5f5f5;
-}
-
-/* Recap section */
-.recap-section {
-  background-color: #f9f9f9;
-  padding: 20px;
-  border-radius: 8px;
-}
-
-.recap-actions {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 15px;
-}
-
-#recap-content {
-  padding: 15px;
-  background-color: white;
-  border-radius: 4px;
-  min-height: 100px;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .summary {
-    flex-direction: column;
-    gap: 5px;
-  }
-  
-  .recap-actions {
-    flex-direction: column;
-  }
-  
-  button {
-    width: 100%;
-  }
-}
-
-/* Mobile-first table styles */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
-  overflow-x: auto;
-  display: block;
-}
-
-th, td {
-  padding: 8px 4px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-  min-width: 60px;
-}
-
-/* Responsive text */
-td:nth-child(3), /* Kolom jumlah */
-td:nth-child(4) { /* Kolom keterangan */
-  font-size: 13px;
-  max-width: 100px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* Button styles for mobile */
-button {
-  padding: 6px 8px;
-  font-size: 12px;
-}
-
-/* Stack columns on very small screens */
-@media (max-width: 400px) {
-  table {
-    display: table;
-  }
-  
-  th, td {
-    display: table-cell;
-    padding: 6px 3px;
-  }
-  
-  td:nth-child(4) { /* Keterangan */
-    max-width: 80px;
-  }
-}
-
-.transactions-section {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
+/* Summary section */
 .summary {
   display: flex;
   flex-wrap: wrap;
@@ -218,17 +98,66 @@ button {
 
 .summary div {
   background: #f0f8ff;
-  padding: 8px;
+  padding: 10px;
   border-radius: 4px;
-  flex-grow: 1;
+  flex: 1;
+  min-width: 120px;
   text-align: center;
-  min-width: 100px;
+  font-size: 14px;
+}
+
+/* Table container */
+.table-container {
+  overflow-x: auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+
+/* Table styles */
+#transactions-table {
+  width: 100%;
+  min-width: 600px;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+#transactions-table th {
+  background-color: #3498db;
+  color: white;
+  padding: 12px 8px;
+  text-align: left;
+  position: sticky;
+  top: 0;
+}
+
+#transactions-table td {
+  padding: 10px 8px;
+  border-bottom: 1px solid #e0e0e0;
+  vertical-align: middle;
+}
+
+#transactions-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+#transactions-table button {
+  padding: 6px 10px;
+  font-size: 13px;
+}
+
+/* Recap section */
+.recap-section {
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 8px;
 }
 
 .recap-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
+  margin-bottom: 15px;
 }
 
 .recap-actions button {
@@ -236,21 +165,56 @@ button {
   min-width: 120px;
 }
 
-@media (max-width: 600px) {
-  table, thead, tbody, th, td, tr {
-    display: block;
+#recap-content {
+  padding: 15px;
+  background-color: white;
+  border-radius: 4px;
+  min-height: 100px;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
   }
   
-  td {
-    border: none;
-    position: relative;
-    padding-left: 50%;
+  .container {
+    padding: 15px;
   }
   
-  td:before {
-    position: absolute;
-    left: 6px;
-    content: attr(data-label);
-    font-weight: bold;
+  .summary div {
+    min-width: 100px;
+    padding: 8px;
+    font-size: 13px;
+  }
+  
+  #transactions-table th,
+  #transactions-table td {
+    padding: 8px 6px;
+    font-size: 13px;
+  }
+  
+  button {
+    padding: 8px 10px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .recap-actions {
+    flex-direction: column;
+  }
+  
+  .recap-actions button {
+    width: 100%;
+  }
+  
+  .form-group {
+    margin-bottom: 10px;
+  }
+  
+  input, select {
+    padding: 8px;
+    font-size: 14px;
   }
 }

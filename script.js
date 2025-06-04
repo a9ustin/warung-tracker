@@ -16,24 +16,7 @@ const dateInput = document.getElementById('date');
 dateInput.valueAsDate = today;
 currentDateDisplay.textContent = formatDate(today);
 
-// Inisialisasi data (tambahkan di sini)
-if (!localStorage.getItem('todayTransactions')) {
-  localStorage.setItem('todayTransactions', JSON.stringify([]));
-}
-if (!localStorage.getItem('transactionArchive')) {
-  localStorage.setItem('transactionArchive', JSON.stringify([]));
-}
-if (!localStorage.getItem('lastSavedDate')) {
-  localStorage.setItem('lastSavedDate', today.toDateString());
-}
-
-// Check if it's a new day and reset daily transactions if needed
-checkNewDay();
-
-// Load and display today's transactions
-loadTransactions();
-
-// Initialize data with error handling
+// Initialize data storage
 function initializeStorage() {
   try {
     if (!localStorage.getItem('todayTransactions')) {
@@ -43,15 +26,16 @@ function initializeStorage() {
       localStorage.setItem('transactionArchive', JSON.stringify([]));
     }
     if (!localStorage.getItem('lastSavedDate')) {
-      localStorage.setItem('lastSavedDate', new Date().toDateString());
+      localStorage.setItem('lastSavedDate', today.toDateString());
     }
   } catch (error) {
     console.error("Storage initialization failed:", error);
   }
 }
 
-// Panggil fungsi inisialisasi
 initializeStorage();
+checkNewDay();
+loadTransactions();
 
 // Event listeners
 transactionForm.addEventListener('submit', addTransaction);
@@ -59,34 +43,28 @@ dailyRecapBtn.addEventListener('click', showDailyRecap);
 monthlyRecapBtn.addEventListener('click', showMonthlyRecap);
 printRecapBtn.addEventListener('click', printRecap);
 
-// Format date to "DD-MMM-YYYY" (e.g., 29-May-2025)
+// Helper functions
 function formatDate(date) {
   const options = { day: 'numeric', month: 'short', year: 'numeric' };
   return date.toLocaleDateString('en-GB', options);
 }
 
-// Format currency as Rp
 function formatCurrency(amount) {
   return 'Rp' + amount.toLocaleString('id-ID');
 }
 
-// Check if it's a new day and reset daily transactions if needed
 function checkNewDay() {
   const lastSavedDate = localStorage.getItem('lastSavedDate');
   const todayStr = today.toDateString();
   
   if (lastSavedDate && lastSavedDate !== todayStr) {
-    // It's a new day, archive yesterday's transactions
     archiveTransactions();
-    // Clear today's transactions
     localStorage.removeItem('todayTransactions');
   }
   
-  // Update last saved date
   localStorage.setItem('lastSavedDate', todayStr);
 }
 
-// Archive transactions at the end of the day
 function archiveTransactions() {
   const todayTransactions = JSON.parse(localStorage.getItem('todayTransactions') || []);
   if (todayTransactions.length === 0) return;
@@ -94,7 +72,6 @@ function archiveTransactions() {
   const archive = JSON.parse(localStorage.getItem('transactionArchive') || []);
   const todayStr = formatDate(today);
   
-  // Add today's transactions to archive with date
   archive.push({
     date: todayStr,
     transactions: todayTransactions,
@@ -106,7 +83,7 @@ function archiveTransactions() {
   localStorage.setItem('transactionArchive', JSON.stringify(archive));
 }
 
-// Add new transaction
+// Core functions
 function addTransaction(e) {
   e.preventDefault();
   
@@ -119,13 +96,11 @@ function addTransaction(e) {
       date: document.getElementById('date').value
     };
 
-    const transactions = JSON.parse(localStorage.getItem('todayTransactions') || '[]');
+    const transactions = JSON.parse(localStorage.getItem('todayTransactions') || []);
     transactions.push(transaction);
-    
     localStorage.setItem('todayTransactions', JSON.stringify(transactions));
-    loadTransactions();
     
-    // Reset form
+    loadTransactions();
     transactionForm.reset();
     dateInput.valueAsDate = new Date();
   } catch (error) {
@@ -134,7 +109,6 @@ function addTransaction(e) {
   }
 }
 
-// Load and display transactions
 function loadTransactions() {
   let transactions = [];
   try {
@@ -142,7 +116,6 @@ function loadTransactions() {
     transactions = storedData ? JSON.parse(storedData) : [];
   } catch (error) {
     console.error("Error parsing transactions:", error);
-    // Reset data jika corrupt
     transactions = [];
     localStorage.setItem('todayTransactions', JSON.stringify([]));
   }
@@ -163,7 +136,6 @@ function loadTransactions() {
   updateSummary(transactions);
 }
 
-// Update summary section
 function updateSummary(transactions) {
   const totalIncome = calculateTotal(transactions, 'income');
   const totalExpense = calculateTotal(transactions, 'expense');
@@ -174,21 +146,18 @@ function updateSummary(transactions) {
   balanceDisplay.textContent = formatCurrency(balance);
 }
 
-// Calculate total income or expense
 function calculateTotal(transactions, type) {
   return transactions
     .filter(t => t.type === type)
     .reduce((sum, t) => sum + t.amount, 0);
 }
 
-// Calculate balance (income - expense)
 function calculateBalance(transactions) {
   const income = calculateTotal(transactions, 'income');
   const expense = calculateTotal(transactions, 'expense');
   return income - expense;
 }
 
-// Delete transaction
 function deleteTransaction(id) {
   let transactions = JSON.parse(localStorage.getItem('todayTransactions')) || [];
   transactions = transactions.filter(t => t.id !== id);
@@ -196,7 +165,7 @@ function deleteTransaction(id) {
   loadTransactions();
 }
 
-// Show daily recap
+// Recap functions
 function showDailyRecap() {
   const transactions = JSON.parse(localStorage.getItem('todayTransactions') || []);
   const totalIncome = calculateTotal(transactions, 'income');
@@ -232,19 +201,16 @@ function showDailyRecap() {
   recapContent.innerHTML = html;
 }
 
-// Show monthly recap
 function showMonthlyRecap() {
   const archive = JSON.parse(localStorage.getItem('transactionArchive') || []);
   const currentMonth = today.getMonth();
   const currentYear = today.getFullYear();
   
-  // Filter transactions for current month
   const monthlyData = archive.filter(entry => {
     const entryDate = new Date(entry.date);
     return entryDate.getMonth() === currentMonth && entryDate.getFullYear() === currentYear;
   });
   
-  // Calculate monthly totals
   const monthlyIncome = monthlyData.reduce((sum, day) => sum + day.totalIncome, 0);
   const monthlyExpense = monthlyData.reduce((sum, day) => sum + day.totalExpense, 0);
   const monthlyBalance = monthlyIncome - monthlyExpense;
@@ -277,7 +243,6 @@ function showMonthlyRecap() {
   recapContent.innerHTML = html;
 }
 
-// Print recap
 function printRecap() {
   const printWindow = window.open('', '_blank');
   printWindow.document.write(`
