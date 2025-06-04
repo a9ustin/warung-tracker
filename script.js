@@ -33,6 +33,25 @@ checkNewDay();
 // Load and display today's transactions
 loadTransactions();
 
+// Initialize data with error handling
+function initializeStorage() {
+  try {
+    if (!localStorage.getItem('todayTransactions')) {
+      localStorage.setItem('todayTransactions', JSON.stringify([]));
+    }
+    if (!localStorage.getItem('transactionArchive')) {
+      localStorage.setItem('transactionArchive', JSON.stringify([]));
+    }
+    if (!localStorage.getItem('lastSavedDate')) {
+      localStorage.setItem('lastSavedDate', new Date().toDateString());
+    }
+  } catch (error) {
+    console.error("Storage initialization failed:", error);
+  }
+}
+
+// Panggil fungsi inisialisasi
+initializeStorage();
 
 // Event listeners
 transactionForm.addEventListener('submit', addTransaction);
@@ -91,39 +110,45 @@ function archiveTransactions() {
 function addTransaction(e) {
   e.preventDefault();
   
-  const type = document.getElementById('type').value;
-  const amount = parseFloat(document.getElementById('amount').value);
-  const description = document.getElementById('description').value;
-  const date = document.getElementById('date').value;
-  
-  const transaction = {
-    id: Date.now(),
-    type,
-    amount,
-    description,
-    date
-  };
-  
-  // Save to localStorage
-  const transactions = JSON.parse(localStorage.getItem('todayTransactions') || []);
-  transactions.push(transaction);
-  localStorage.setItem('todayTransactions', JSON.stringify(transactions));
-  
-  // Reset form
-  transactionForm.reset();
-  dateInput.valueAsDate = today;
-  
-  // Update UI
-  loadTransactions();
+  try {
+    const transaction = {
+      id: Date.now(),
+      type: document.getElementById('type').value,
+      amount: parseFloat(document.getElementById('amount').value),
+      description: document.getElementById('description').value,
+      date: document.getElementById('date').value
+    };
+
+    const transactions = JSON.parse(localStorage.getItem('todayTransactions') || '[]');
+    transactions.push(transaction);
+    
+    localStorage.setItem('todayTransactions', JSON.stringify(transactions));
+    loadTransactions();
+    
+    // Reset form
+    transactionForm.reset();
+    dateInput.valueAsDate = new Date();
+  } catch (error) {
+    console.error("Failed to save transaction:", error);
+    alert("Gagal menyimpan transaksi. Coba lagi.");
+  }
 }
 
 // Load and display transactions
 function loadTransactions() {
-  // Perbaikan: Gunakan array kosong jika data null/undefined
-  const transactions = JSON.parse(localStorage.getItem('todayTransactions') || '[]');
-  
+  let transactions = [];
+  try {
+    const storedData = localStorage.getItem('todayTransactions');
+    transactions = storedData ? JSON.parse(storedData) : [];
+  } catch (error) {
+    console.error("Error parsing transactions:", error);
+    // Reset data jika corrupt
+    transactions = [];
+    localStorage.setItem('todayTransactions', JSON.stringify([]));
+  }
+
   transactionsTable.innerHTML = '';
-  
+
   transactions.forEach((transaction, index) => {
     const row = transactionsTable.insertRow();
     row.innerHTML = `
@@ -134,7 +159,7 @@ function loadTransactions() {
       <td><button onclick="deleteTransaction(${transaction.id})">Hapus</button></td>
     `;
   });
-  
+
   updateSummary(transactions);
 }
 
